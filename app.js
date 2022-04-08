@@ -1,5 +1,6 @@
 const http = require("http");
 const user = require("./user");
+const querystring = require('querystring');
 const port = process.env.PORT || 3000;
 
 //Function to get Data in Array format 
@@ -59,7 +60,52 @@ const server = http.createServer(async (req, res) => {
       res.end(`<h1>${registerUser.message}</h1>`);
     }
 
-  } else {
+  } 
+  else if(req.url === "/delete" && req.method === "DELETE")
+  {
+    let data = await getReqData(req);
+    if (!data) {
+      res.statusCode = 404;
+      res.setHeader("Content-Type", "text/html");
+      res.end("<h1>INVALID DATA</h1>");
+    }
+    const deleteUser = user.remove(data);
+    if(deleteUser.status)
+    {
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "text/html");
+      res.end(`<h1>${deleteUser.message}</h1>`);
+    }
+    else
+    {
+      res.statusCode = deleteUser.statusCode;
+      res.setHeader("Content-Type", "text/html");
+      res.end(`<h1>${deleteUser.message}</h1>`);
+    }
+  }
+  else if(req.url === "/update" && req.method === "PATCH")
+  {
+    let data = await getReqData(req);
+    if (!data) {
+      res.statusCode = 404;
+      res.setHeader("Content-Type", "text/html");
+      res.end("<h1>INVALID DATA</h1>");
+    }
+    const updateUser = user.update(data);
+    if(updateUser.status)
+    {
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "text/html");
+      res.end(`<h1>${updateUser.message}</h1>`);
+    }
+    else
+    {
+      res.statusCode = updateUser.statusCode;
+      res.setHeader("Content-Type", "text/html");
+      res.end(`<h1>${updateUser.message}</h1>`);
+    }
+  }
+  else {
     res.writeHead(404, { "Content-Type": "text/html" });
     res.write("404 ERROR PAGE. PAGE DOESN't EXIT");
     res.end();

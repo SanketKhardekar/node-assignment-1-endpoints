@@ -40,6 +40,48 @@ const register=(registrationData)=>{
     }
 }
 
+const remove=(userData)=>{
+    const users=loadUsers();
+    const isUser=users.find((user)=> user.id ===userData.id)
+    if(isUser)
+    {
+        try
+        {
+            let updatedUsers=users.filter((user)=> user.id !== userData.id)
+            saveUser(updatedUsers)
+        }
+        catch(error)
+        {
+            return {status: false,message:error, statusCode:409}
+        }
+        return {status:true,message:"User Deleted SuccessFully"}
+    }
+    else{
+        return {stats:false, message:"User Does Not Exists",statusCode:409}
+    }
+}
+const update=(userData)=>{
+    const users=loadUsers();
+    const isValidUser=users.find((user)=> user.id ===userData.id)
+    if(isValidUser)
+    {
+        try
+        {
+            let updatedUsers=users.filter((user)=>user.id ===userData.id)
+            updatedUsers.push(userData)
+            saveUser(updatedUsers)
+        }
+        catch(error)
+        {
+            return {status: false,message:error, statusCode:409}
+        }
+        return {status:true,message:`User Updated SuccessFully` }
+    }
+    else
+    {
+        return {stats:false, message:"User Does Not Exists",statusCode:409}
+    }
+}
 const saveUser=(userData)=>{
     const userDataJson=JSON.stringify(userData)
     fs.writeFileSync("users.json",userDataJson)
@@ -57,4 +99,6 @@ const loadUsers=()=>{
 module.exports={
     login,
     register,
+    remove,
+    update,
 }
